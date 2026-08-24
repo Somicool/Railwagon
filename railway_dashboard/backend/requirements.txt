@@ -1,0 +1,32 @@
+# rAIlwagon Inspection System - Backend Requirements
+# ===================================================
+
+# Flask Web Framework
+Flask==2.3.0
+Flask-CORS==4.0.0
+Werkzeug==2.3.0
+
+# Deep Learning
+torch>=1.9.0
+torchvision>=0.10.0
+
+# Computer Vision & Image Processing
+opencv-python>=4.5.0
+opencv-contrib-python>=4.5.0
+Pillow>=9.0.0
+
+# OCR
+easyocr>=1.6.0
+pytesseract>=0.3.10
+
+# Numerical Computing
+numpy>=1.19.0
+scipy>=1.7.0
+
+# Utilities
+tqdm>=4.62.0
+pathlib>=1.0.1
+
+# Optional: For GPU acceleration
+# CUDA toolkit should be installed separately
+# cuDNN should be installed separately
