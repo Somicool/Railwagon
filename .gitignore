@@ -1,0 +1,66 @@
+# Virtual environments
+venv/
+env/
+ENV/
+**/venv/
+**/env/
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Large model weights / checkpoints
+checkpoints/
+weights/
+*.pth
+*.pkl
+*.pt
+!railway_dashboard/backend/yolov8n.pt
+
+# Datasets (too large for GitHub)
+GOPRO_Large/
+LOL_BLUR/
+train/
+
+# Generated outputs / results (regenerable, large)
+--output/
+comparison_results/
+finetuned_railway_test/
+live_simple_output/
+my_fusion_results/
+railway_demo_output/
+railway_final_output/
+railway_full_frames/
+railway_simple_output/
+railway_vid3_results/
+railway_with_annotations/
+simple_test_output/
+test_output/
+test_pipeline_output/
+test_results/
+test_results_simple/
+test_sequence/
+train_video_4_results/
+train4_output/
+train4_sharp_ocr/
+wagon_zoom_demo/
+sessions/
+sessions_deleted/
+uploads/
+**/sessions/
+**/sessions_deleted/
+**/uploads/
+**/incidents_db/*.npy
+
+# Videos (large binaries)
+*.mp4
+
+# HACKATHON_SUBMISSION duplicate bundle
+HACKATHON_SUBMISSION/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

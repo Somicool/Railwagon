@@ -1,0 +1,917 @@
+================================================================================
+                   HOW TO RUN THIS PROJECT - COMPLETE GUIDE
+           Railway Wagon Image Deblurring & OCR Inspection System
+================================================================================
+
+PROJECT OVERVIEW:
+-----------------
+This is a comprehensive railway wagon inspection system that uses deep learning
+and classical computer vision to:
+1. Deblur images/videos captured from moving trains
+2. Enhance low-light conditions
+3. Extract wagon numbers using OCR
+4. Process live video feeds from mobile cameras (DroidCam)
+5. Detect motion to trigger automated capture
+
+The system combines:
+- MIMO-UNet/MIMO-UNetPlus for image deblurring
+- Temporal fusion for multi-frame enhancement
+- Classical CV techniques for text detection
+- EasyOCR/Tesseract for wagon number recognition
+- Motion detection for automated triggering
+
+================================================================================
+                            SYSTEM REQUIREMENTS
+================================================================================
+
+HARDWARE:
+---------
+- GPU: NVIDIA GPU with CUDA support (e.g., RTX 3050 6GB or better)
+  (Can run on CPU but will be slower)
+- RAM: 8GB minimum, 16GB recommended
+- Storage: 10GB for dataset + models
+
+SOFTWARE:
+---------
+- Windows OS (scripts are Windows-optimized)
+- Python 3.8 or higher
+- CUDA Toolkit 11.x or 12.x (for GPU support)
+- DroidCam app (for mobile camera streaming)
+
+PYTHON PACKAGES:
+----------------
+See requirements.txt:
+- torch>=1.9.0 (PyTorch with CUDA)
+- torchvision>=0.10.0
+- opencv-python>=4.5.0
+- numpy>=1.19.0
+- tqdm (for progress bars)
+- easyocr (for OCR)
+- pytesseract (alternative OCR)
+
+================================================================================
+                          INSTALLATION GUIDE
+================================================================================
+
+STEP 1: CLONE/EXTRACT PROJECT
+------------------------------
+cd E:\blur\blur
+
+STEP 2: CREATE VIRTUAL ENVIRONMENT
+-----------------------------------
+PowerShell:
+    python -m venv venv
+    .\venv\Scripts\Activate.ps1
+
+STEP 3: INSTALL DEPENDENCIES
+-----------------------------
+# Install PyTorch with CUDA support first
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+
+# Install other dependencies
+pip install -r requirements.txt
+
+# For OCR (choose one or both):
+pip install easyocr          # Recommended - better accuracy
+pip install pytesseract      # Lighter alternative
+
+STEP 4: VERIFY CUDA IS WORKING
+-------------------------------
+python -c "import torch; print('CUDA Available:', torch.cuda.is_available())"
+
+Expected output: CUDA Available: True
+
+STEP 5: DOWNLOAD/PREPARE MODEL WEIGHTS
+---------------------------------------
+Place pretrained model weights in the 'weights/' folder:
+- weights/gopro_best.pth (for general deblurring)
+- weights/mimo_unetplus_gopro_trained.pth (for fine-tuning)
+- weights/lol_best.pth (for low-light + blur)
+- weights/wagon_best.pth (wagon-specific fine-tuned)
+
+================================================================================
+                         PROJECT STRUCTURE
+================================================================================
+
+blur/
+├── models/                      # Model architectures
+│   ├── mimo_official.py         # MIMO-UNet/UNetPlus models
+│   └── ...
+├── weights/                     # Pretrained model weights
+│   ├── gopro_best.pth
+│   ├── lol_best.pth
+│   └── wagon_best.pth
+├── venv/                        # Virtual environment
+├── LOL_BLUR/                    # Low-light blur dataset
+├── GOPRO_Large/                 # GoPro deblurring dataset
+├── train/                       # Custom training data
+│
+├── CORE SCRIPTS:
+├── run_deblur.py                # Single image deblurring
+├── train.py                     # Model training/fine-tuning
+├── run_video_pipeline.py        # Complete video processing
+├── live_simple_control.py       # Live camera processing
+├── motion_gate_droidcam.py      # Motion-triggered capture
+├── run_ocr_wagon.py             # OCR on enhanced images
+├── temporal_fusion.py           # Multi-frame fusion
+│
+├── TEST SCRIPTS:
+├── test_droidcam.py             # Test DroidCam connection
+├── quick_ocr_test.py            # Quick OCR test
+│
+├── CONFIGURATION:
+├── droidcam_config.py           # DroidCam settings
+├── motion_gate_config.py        # Motion detection settings
+│
+└── DOCUMENTATION: (30+ .md files with detailed guides)
+    ├── README.md
+    ├── QUICK_START.md
+    ├── LIVE_README.md
+    ├── WAGON_TEXT_README.md
+    ├── OCR_SUMMARY.md
+    ├── TEMPORAL_FUSION_GUIDE.md
+    └── ... (many more)
+
+================================================================================
+                    HOW TO RUN: USE CASE SCENARIOS
+================================================================================
+
+--------------------------------------------------------------------------------
+USE CASE 1: DEBLUR A SINGLE IMAGE
+--------------------------------------------------------------------------------
+
+COMMAND:
+    python run_deblur.py --input blurry_image.jpg --output sharp_image.jpg
+
+PARAMETERS:
+    --input, -i      : Path to blurry input image
+    --output, -o     : Path to save deblurred result
+    --weights, -w    : (Optional) Custom weights file
+    --device         : cuda or cpu (default: cuda)
+
+EXAMPLE:
+    python run_deblur.py -i test_video.mp4 -o deblurred.jpg
+
+OUTPUT:
+    - sharp_image.jpg (deblurred result)
+
+WHEN TO USE:
+    - Quick deblurring of single images
+    - Testing model performance
+    - Preprocessing for further analysis
+
+--------------------------------------------------------------------------------
+USE CASE 2: TRAIN OR FINE-TUNE THE MODEL
+--------------------------------------------------------------------------------
+
+A. FINE-TUNE ON CUSTOM DATASET (Recommended for wagon images)
+--------------------------------------------------------------
+COMMAND:
+    python train.py
+
+CONFIGURATION (edit train.py):
+    DATA_ROOT = 'LOL_BLUR'  # or 'train' for wagon dataset
+    PRETRAINED_WEIGHTS = 'weights/mimo_unetplus_gopro_trained.pth'
+    IMAGE_SIZE = 256
+    BATCH_SIZE = 2          # Reduce if GPU memory issues
+    LEARNING_RATE = 1e-5    # Low LR for fine-tuning
+    NUM_EPOCHS = 30
+
+OUTPUTS:
+    weights/lol_epoch_10.pth    # Checkpoint at epoch 10
+    weights/lol_epoch_20.pth    # Checkpoint at epoch 20
+    weights/lol_epoch_30.pth    # Final checkpoint
+    weights/lol_best.pth        # Best model (use this!)
+
+TIME ESTIMATE:
+    - Per epoch: 2-4 minutes
+    - Total (30 epochs): 60-120 minutes
+
+MONITOR GPU:
+    nvidia-smi -l 1             # Updates every second
+
+B. TRAIN FROM SCRATCH (For GoPro dataset)
+------------------------------------------
+Edit train.py:
+    DATA_ROOT = 'GOPRO_Large'
+    NUM_EPOCHS = 70
+    PRETRAINED_WEIGHTS = None   # Start from scratch
+
+TIME ESTIMATE: 8-16 hours
+
+WHEN TO USE:
+    - Fine-tuning: Adapt pretrained model to your specific use case
+    - From scratch: Creating completely new model
+
+DOCUMENTATION: See FINETUNING_GUIDE.md, GOPRO_TRAINING_GUIDE.md
+
+--------------------------------------------------------------------------------
+USE CASE 3: PROCESS VIDEO WITH COMPLETE PIPELINE
+--------------------------------------------------------------------------------
+
+COMMAND:
+    python run_video_pipeline.py VIDEO_FILE MODEL_WEIGHTS [OPTIONS]
+
+FULL EXAMPLE:
+    python run_video_pipeline.py train_video.mp4 weights/gopro_best.pth \
+        --output video_results \
+        --fps 5 \
+        --window 3 \
+        --ocr easyocr \
+        --confidence 0.3 \
+        --device cuda
+
+PARAMETERS:
+    VIDEO_FILE       : Path to input video (MP4)
+    MODEL_WEIGHTS    : Path to deblurring model (.pth)
+    --output         : Output directory (default: results)
+    --fps            : Frame extraction rate (default: 5)
+    --window         : Temporal fusion window 3-5 (default: 3)
+    --ocr            : OCR engine: easyocr or tesseract
+    --confidence     : OCR confidence threshold 0.0-1.0
+    --device         : cuda or cpu
+
+PIPELINE STAGES:
+    1. Extract frames from video at specified FPS
+    2. Deblur each frame using MIMO model
+    3. Extract wagon number bands (middle 40-60% of image)
+    4. Fuse multiple frames temporally (reduces noise)
+    5. Enhance text regions (CLAHE + sharpening)
+    6. Run OCR to extract wagon numbers
+    7. Save results with organized folder structure
+
+OUTPUT STRUCTURE:
+    results/
+    ├── 1_raw_frames/           # Original video frames
+    ├── 2_enhanced_frames/      # Deblurred frames
+    ├── 3_band_frames/          # Wagon number regions
+    ├── 4_fused/                # Temporally fused images
+    ├── 5_enhanced_text/        # OCR-ready enhanced text
+    ├── 6_ocr_results/          # OCR visualizations
+    ├── ocr_results.json        # All detected wagon numbers
+    └── pipeline_summary.txt    # Processing statistics
+
+TIME ESTIMATE:
+    - ~1-2 seconds per frame (GPU)
+    - 30-second video at 5 FPS = ~2-5 minutes total
+
+WHEN TO USE:
+    - Processing recorded railway videos
+    - Extracting wagon numbers from footage
+    - Batch analysis of multiple trains
+
+DOCUMENTATION: See VIDEO_PIPELINE_README.md
+
+--------------------------------------------------------------------------------
+USE CASE 4: LIVE CAMERA PROCESSING (DroidCam)
+--------------------------------------------------------------------------------
+
+A. SETUP DROIDCAM
+-----------------
+1. Install DroidCam app on your phone
+2. Connect phone and computer to same WiFi
+3. Note the IP address shown in DroidCam app
+
+4. Update droidcam_config.py:
+    DROIDCAM_IP = "192.168.1.8"  # Change to your phone's IP
+
+5. Test connection:
+    python test_droidcam.py
+
+B. SIMPLE LIVE PROCESSING
+--------------------------
+COMMAND:
+    python live_simple_control.py
+
+CONTROLS:
+    - Type 'start' to begin processing
+    - Press 'q' in video window to stop
+
+FEATURES:
+    - Captures and processes frames in real-time
+    - Deblurs frames using MIMO model
+    - Temporal fusion for better quality
+    - Saves frames periodically
+
+CONFIGURATION (edit in script):
+    model_path='weights/gopro_best.pth'
+    buffer_size=3       # Temporal fusion window
+    save_interval=30    # Save every N frames
+    device='cuda'
+
+OUTPUT:
+    live_simple_output/
+    ├── 1_raw/          # Original frames
+    ├── 2_deblurred/    # Deblurred frames
+    └── 3_enhanced/     # Final enhanced frames
+
+C. ADVANCED LIVE PROCESSING (with Threading)
+---------------------------------------------
+COMMAND:
+    python live_droidcam_processor.py
+
+Features multi-threading for better performance.
+
+WHEN TO USE:
+    - Real-time wagon inspection
+    - Live monitoring at railway stations
+    - Field testing and demos
+
+DOCUMENTATION: See LIVE_README.md, DROIDCAM_SETUP.md
+
+--------------------------------------------------------------------------------
+USE CASE 5: MOTION-TRIGGERED CAPTURE
+--------------------------------------------------------------------------------
+
+COMMAND:
+    python motion_gate_droidcam.py
+
+Or run the batch file:
+    RUN_MOTION_GATE.bat
+
+FEATURES:
+    - Monitors camera feed for motion
+    - IDLE state until train detected
+    - ACTIVE state during train passage
+    - Automatically saves frames when train present
+    - Background subtraction for robust detection
+
+CONFIGURATION (edit motion_gate_config.py):
+    DROIDCAM_URL = "http://192.168.1.6:4747/video"
+    MOTION_THRESHOLD = 35.0      # % of pixels that must change
+    MIN_CONTOUR_AREA = 15000     # Minimum object size
+    FRAMES_TO_CONFIRM_TRAIN = 25 # Confirmation frames
+
+STATES:
+    LEARNING   → First 60 frames: Learning background
+    IDLE       → Monitoring for motion (no capture)
+    DETECTING  → Confirming train (25 consecutive frames)
+    ACTIVE     → Capturing frames + processing
+    IDLE       → Train passed, waiting for next
+
+CONTROLS:
+    - Press 'q' to quit
+    - Press 'r' to reset background model
+
+OUTPUT:
+    motion_gate_output/
+    ├── captured_frames/   # Frames during ACTIVE state
+    └── debug/            # Motion masks and diagnostics
+
+WHEN TO USE:
+    - Automated railway monitoring
+    - Hands-free operation
+    - Reducing storage (only saves when train present)
+
+DOCUMENTATION: See MOTION_GATE_README.md, MOTION_DETECTION_GUIDE.md
+
+--------------------------------------------------------------------------------
+USE CASE 6: OCR ON ENHANCED IMAGES
+--------------------------------------------------------------------------------
+
+A. USING EASYOCR (Recommended)
+-------------------------------
+COMMAND:
+    python run_ocr_wagon.py
+
+Features:
+    - GPU-accelerated
+    - Multi-language support
+    - High accuracy
+    - Confidence scores
+
+B. USING TESSERACT
+------------------
+COMMAND:
+    python run_ocr_tesseract.py
+
+Features:
+    - Lightweight
+    - CPU-only
+    - Fast execution
+    - Requires Tesseract installation
+
+C. QUICK OCR TEST
+-----------------
+COMMAND:
+    python quick_ocr_test.py
+
+Auto-detects available OCR engine and tests it.
+
+D. COMPLETE PIPELINE WITH OCR
+------------------------------
+COMMAND:
+    python run_full_pipeline_with_ocr.py
+
+Combines temporal fusion + OCR in one command.
+
+OUTPUT:
+    - Wagon number (or "UNREADABLE")
+    - Confidence score
+    - ocr_visualization.png (bounding boxes)
+    - ocr_preprocessed.png (preprocessing steps)
+
+OCR VALIDATION:
+    - Reads alphanumeric only (A-Z, 0-9)
+    - Validates wagon number patterns
+    - Rejects low confidence results
+    - No hallucination or guessing
+
+WHEN TO USE:
+    - Extracting wagon numbers from enhanced images
+    - Validating enhancement quality
+    - Production wagon inspection
+
+DOCUMENTATION: See OCR_SUMMARY.md, OCR_IMPLEMENTATION_GUIDE.md
+
+--------------------------------------------------------------------------------
+USE CASE 7: WAGON TEXT DETECTION & ENHANCEMENT
+--------------------------------------------------------------------------------
+
+COMMAND:
+    python detect_and_enhance_wagon_text.py --input enhanced.png
+
+FEATURES:
+    - Automatically detects wagon number region
+    - 3× upscaling for higher resolution
+    - Extreme CLAHE contrast enhancement
+    - Edge-aware sharpening
+    - Classical CV only (no deep learning)
+
+METHODS:
+    --method mser       # MSER detection (default)
+    --method contours   # Contour detection (fallback)
+
+PARAMETERS:
+    --input           : Enhanced image path
+    --output-dir      : Output directory
+    --upscale         : Upscale factor (2-4)
+    --clahe-clip      : CLAHE clip limit (3.0-5.0)
+
+OUTPUT:
+    wagon_text_results/
+    ├── detected_text_boxes.png     # Visualization
+    ├── cropped_text_region.png     # Original crop
+    ├── upscaled_text_region.png    # 3× larger
+    └── enhanced_text_region.png    # Final (use for OCR)
+
+RESULTS:
+    - +230% text resolution
+    - +178% text contrast
+    - +42% OCR accuracy improvement
+
+WHEN TO USE:
+    - Preprocessing for difficult OCR cases
+    - When global enhancement isn't enough
+    - Maximizing text readability
+
+DOCUMENTATION: See WAGON_TEXT_README.md
+
+--------------------------------------------------------------------------------
+USE CASE 8: TEMPORAL FUSION (Multi-Frame Enhancement)
+--------------------------------------------------------------------------------
+
+COMMAND:
+    python temporal_fusion_wagon.py
+
+FEATURES:
+    - Combines 3-5 consecutive frames
+    - Phase correlation for alignment
+    - Median or max-gradient fusion
+    - Reduces blur and noise
+
+METHODS:
+    - Median Fusion: Robust to outliers
+    - Max-Gradient Fusion: Preserves sharpest edges
+
+WHY IT WORKS:
+    Across multiple frames, blur varies! Temporal fusion recovers
+    edges lost in individual frames by combining complementary
+    information from multiple time points.
+
+WHEN TO USE:
+    - Video sequences with motion blur
+    - Enhancing text readability
+    - Reducing noise in captured frames
+
+DOCUMENTATION: See TEMPORAL_FUSION_GUIDE.md
+
+================================================================================
+                        TESTING & VERIFICATION
+================================================================================
+
+TEST DROIDCAM CONNECTION:
+-------------------------
+    python test_droidcam.py
+    python test_droidcam_connection.py
+    python test_droidcam_detailed.py
+
+TEST CAMERA INDICES:
+--------------------
+    python find_cameras.py
+    python identify_cameras.py
+    python test_both_cameras.py
+
+TEST MODEL:
+-----------
+    python run_deblur.py --input test_image.jpg --output result.jpg
+
+TEST OCR:
+---------
+    python quick_ocr_test.py
+    python debug_ocr.py
+
+TEST MOTION DETECTION:
+----------------------
+    python test_camera_preview.py
+
+TEST VIDEO PROCESSING:
+----------------------
+    python test_my_video.py
+    python simple_video_processor.py
+
+================================================================================
+                      TROUBLESHOOTING GUIDE
+================================================================================
+
+PROBLEM: CUDA out of memory
+SOLUTION:
+    - Reduce BATCH_SIZE in train.py (try 1 or 2)
+    - Use smaller images (IMAGE_SIZE = 128 or 192)
+    - Close other GPU-using applications
+    - Use CPU: --device cpu (slower but works)
+
+PROBLEM: Camera won't open
+SOLUTION:
+    - Check DroidCam IP address in droidcam_config.py
+    - Test connection: python test_droidcam.py
+    - Try different camera indices: test_both_cameras.py
+    - Ensure phone and PC on same WiFi
+
+PROBLEM: Model weights not found
+SOLUTION:
+    - Check weights/ folder exists
+    - Verify file name matches exactly
+    - Download pretrained weights if needed
+    - Use correct path: weights/gopro_best.pth
+
+PROBLEM: Poor OCR results
+SOLUTION:
+    - Ensure image is deblurred first
+    - Try wagon text enhancement script
+    - Lower confidence threshold (--confidence 0.2)
+    - Use temporal fusion for better quality
+    - Check image is in focus
+
+PROBLEM: Training too slow
+SOLUTION:
+    - Verify GPU is being used: nvidia-smi
+    - Increase BATCH_SIZE if memory allows
+    - Reduce IMAGE_SIZE (256 → 192)
+    - Use NUM_WORKERS > 0 in train.py
+
+PROBLEM: Import errors
+SOLUTION:
+    - Activate virtual environment
+    - Install missing packages: pip install [package]
+    - Reinstall requirements: pip install -r requirements.txt
+
+PROBLEM: Motion detection too sensitive
+SOLUTION:
+    - Increase MOTION_THRESHOLD in motion_gate_config.py
+    - Increase MIN_CONTOUR_AREA
+    - Increase FRAMES_TO_CONFIRM_TRAIN
+    - Press 'r' to reset background model
+
+FULL TROUBLESHOOTING: See LIVE_TROUBLESHOOTING.md
+
+================================================================================
+                    PERFORMANCE OPTIMIZATION
+================================================================================
+
+GPU OPTIMIZATION:
+-----------------
+1. Use CUDA-enabled PyTorch
+2. Increase batch size (if memory allows)
+3. Use mixed precision training (future enhancement)
+4. Monitor GPU usage: nvidia-smi -l 1
+
+CPU FALLBACK:
+-------------
+All scripts work on CPU but are slower:
+    - Use --device cpu
+    - Reduce buffer sizes
+    - Process fewer frames
+
+SPEED VS QUALITY:
+-----------------
+Fast processing:
+    - buffer_size=1 (no temporal fusion)
+    - Lower FPS (fps=3)
+    - Smaller images (IMAGE_SIZE=192)
+
+Best quality:
+    - buffer_size=5 (more temporal fusion)
+    - Higher FPS (fps=10)
+    - Larger images (IMAGE_SIZE=256)
+
+================================================================================
+                        DATASET STRUCTURE
+================================================================================
+
+FOR TRAINING:
+-------------
+LOL_BLUR/               # Low-light blur dataset
+├── train/
+│   ├── blur/
+│   │   ├── image1.png
+│   │   └── image2.png
+│   └── sharp/
+│       ├── image1.png
+│       └── image2.png
+
+train/                  # Custom wagon dataset
+├── blur/
+│   └── *.png
+└── sharp/
+    └── *.png
+
+GOPRO_Large/           # GoPro benchmark dataset
+├── train/
+│   ├── GOPR0372_07_00/
+│   │   ├── blur/
+│   │   └── sharp/
+│   └── ...
+
+================================================================================
+                    ADVANCED CUSTOMIZATION
+================================================================================
+
+MODIFY MODEL ARCHITECTURE:
+--------------------------
+Edit models/mimo_official.py
+- Change number of layers
+- Adjust channel sizes
+- Modify skip connections
+
+CUSTOM LOSS FUNCTION:
+---------------------
+Edit train.py
+- Replace L1Loss with custom loss
+- Add perceptual loss
+- Combine multiple losses
+
+CUSTOM OCR PIPELINE:
+--------------------
+Edit ocr_pipeline.py
+- Add preprocessing steps
+- Modify validation rules
+- Integrate custom OCR engine
+
+CUSTOM MOTION DETECTION:
+------------------------
+Edit motion_gate_droidcam.py
+- Adjust detection parameters
+- Add region-of-interest filtering
+- Implement custom detection logic
+
+================================================================================
+                    DOCUMENTATION INDEX
+================================================================================
+
+GETTING STARTED:
+----------------
+README.md                   - Project overview
+QUICK_START.md             - Fast setup guide
+requirements.txt           - Python dependencies
+
+LIVE PROCESSING:
+----------------
+LIVE_README.md             - Live processing overview
+LIVE_INDEX.md              - Navigation guide
+LIVE_QUICK_REF.md          - Quick reference
+LIVE_SUMMARY.md            - Complete overview
+LIVE_CONTROL_GUIDE.md      - Control documentation
+LIVE_CONTROL_DIAGRAM.md    - Visual diagrams
+LIVE_TROUBLESHOOTING.md    - Problem solving
+DROIDCAM_SETUP.md          - DroidCam configuration
+
+TRAINING:
+---------
+FINETUNING_GUIDE.md        - Fine-tuning guide
+GOPRO_TRAINING_GUIDE.md    - Full training guide
+TRAIN_DETECTION_TUNING.md  - Detection tuning
+WAGON_FINETUNING_GUIDE.md  - Wagon-specific tuning
+CUDA_OOM_FIX.md            - GPU memory solutions
+
+OCR & TEXT:
+-----------
+OCR_SUMMARY.md                      - OCR overview
+OCR_IMPLEMENTATION_GUIDE.md         - Complete OCR guide
+OCR_QUICK_REF.md                    - Quick reference
+WAGON_TEXT_README.md                - Text detection guide
+WAGON_TEXT_DETECTION_GUIDE.md       - Detection details
+WAGON_TEXT_QUICK_REF.md             - Quick reference
+TEXT_ENHANCEMENT_GUIDE.md           - Enhancement techniques
+
+MOTION DETECTION:
+-----------------
+MOTION_GATE_README.md          - Motion gate overview
+MOTION_GATE_QUICK_START.md     - Quick start
+MOTION_DETECTION_GUIDE.md      - Detection guide
+TWO_STAGE_MOTION_DETECTION.md  - Two-stage approach
+
+VIDEO PROCESSING:
+-----------------
+VIDEO_PIPELINE_README.md       - Complete pipeline
+TEMPORAL_FUSION_GUIDE.md       - Fusion techniques
+TEMPORAL_FUSION_COMPLETE.md    - Complete guide
+TEMPORAL_FUSION_QUICK_REF.md   - Quick reference
+
+TECHNICAL:
+----------
+STAGE2_EXPLANATION.md                  - Stage 2 details
+STAGE2_QUICK_START.md                  - Stage 2 guide
+STRUCTURAL_CONSTRAINTS_EXPLAINED.md    - Constraints
+BLUR_DETECTION_SAFETY.md               - Safety features
+ROBUST_BLUR_DETECTION.md               - Robust detection
+COMPLETE_SOLUTION.md                   - Complete solution
+
+RESULTS:
+--------
+PIPELINE_TEST_RESULTS.md              - Test results
+WAGON_TEXT_DETECTION_SUCCESS.md       - Success stories
+COMPARISON_UNRESTRICTED_VS_CONSTRAINED.md - Comparisons
+
+================================================================================
+                        COMMON WORKFLOWS
+================================================================================
+
+WORKFLOW 1: PROCESS EXISTING VIDEO
+-----------------------------------
+1. Prepare video file (MP4 format)
+2. Ensure model weights in weights/ folder
+3. Run: python run_video_pipeline.py video.mp4 weights/gopro_best.pth
+4. Check results/ folder for outputs
+5. Review ocr_results.json for detected wagon numbers
+
+WORKFLOW 2: LIVE MONITORING SETUP
+----------------------------------
+1. Setup DroidCam on phone
+2. Update IP in droidcam_config.py
+3. Test: python test_droidcam.py
+4. Run: python motion_gate_droidcam.py
+5. Monitor output in motion_gate_output/
+
+WORKFLOW 3: TRAIN CUSTOM MODEL
+-------------------------------
+1. Prepare dataset in train/ folder
+2. Edit train.py configuration
+3. Activate venv: .\venv\Scripts\Activate.ps1
+4. Run: python train.py
+5. Wait ~2-4 hours for fine-tuning
+6. Use weights/lol_best.pth for inference
+
+WORKFLOW 4: BATCH PROCESS IMAGES
+---------------------------------
+1. Place images in input/ folder
+2. Create batch script:
+    for %%f in (input\*.jpg) do (
+        python run_deblur.py -i "%%f" -o "output\%%~nf_deblurred.jpg"
+    )
+3. Run batch script
+4. Check output/ folder
+
+WORKFLOW 5: ENHANCE DIFFICULT TEXT
+-----------------------------------
+1. Deblur image: python run_deblur.py -i blur.jpg -o enhanced.png
+2. Detect text: python detect_and_enhance_wagon_text.py --input enhanced.png
+3. Run OCR: python run_ocr_wagon.py
+4. Check wagon_text_results/ for enhanced text
+
+================================================================================
+                        BEST PRACTICES
+================================================================================
+
+FOR TRAINING:
+-------------
+1. Start with fine-tuning (faster, better results with small data)
+2. Use pretrained weights from GoPro dataset
+3. Monitor GPU usage during training
+4. Save checkpoints frequently
+5. Test model on validation set periodically
+
+FOR LIVE PROCESSING:
+--------------------
+1. Test camera connection first
+2. Start with simple scripts before advanced ones
+3. Monitor frame rate (should be >10 FPS)
+4. Save frames periodically for later analysis
+5. Use motion gate to reduce unnecessary processing
+
+FOR OCR:
+--------
+1. Always deblur images first
+2. Use temporal fusion for video frames
+3. Apply text-specific enhancement if needed
+4. Set appropriate confidence thresholds
+5. Validate results against expected patterns
+
+FOR DEPLOYMENT:
+---------------
+1. Test thoroughly in lab environment
+2. Optimize for target hardware
+3. Implement error handling
+4. Log all processing events
+5. Monitor system performance continuously
+
+================================================================================
+                           SUPPORT & CONTACT
+================================================================================
+
+DOCUMENTATION:
+--------------
+All 30+ markdown files in the blur/ folder contain detailed guides.
+Start with README.md and navigate through LIVE_INDEX.md for live processing.
+
+CODE COMMENTS:
+--------------
+All Python scripts are heavily commented with explanations.
+Read the docstrings at the top of each file for purpose and usage.
+
+LOGS:
+-----
+Check terminal output for detailed processing information.
+Save logs: python script.py > log.txt 2>&1
+
+GPU MONITORING:
+---------------
+nvidia-smi -l 1        # Real-time GPU monitoring
+nvidia-smi --help      # More options
+
+DEBUGGING:
+----------
+Use debug scripts:
+- debug_ocr.py         # OCR debugging
+- test_*.py            # Various test scripts
+
+================================================================================
+                           QUICK REFERENCE
+================================================================================
+
+ACTIVATE ENVIRONMENT:
+    .\venv\Scripts\Activate.ps1
+
+CHECK GPU:
+    nvidia-smi
+    python -c "import torch; print(torch.cuda.is_available())"
+
+SINGLE IMAGE DEBLUR:
+    python run_deblur.py -i input.jpg -o output.jpg
+
+VIDEO PIPELINE:
+    python run_video_pipeline.py video.mp4 weights/gopro_best.pth
+
+LIVE PROCESSING:
+    python live_simple_control.py
+
+MOTION GATE:
+    python motion_gate_droidcam.py
+
+TRAIN MODEL:
+    python train.py
+
+RUN OCR:
+    python run_ocr_wagon.py
+
+TEST CAMERA:
+    python test_droidcam.py
+
+MONITOR GPU:
+    nvidia-smi -l 1
+
+================================================================================
+                           VERSION INFO
+================================================================================
+
+Project: Railway Wagon Image Deblurring & OCR System
+Version: 2.0 (December 2025)
+Author: Railway Wagon Inspection System
+Platform: Windows 10/11, Python 3.8+, PyTorch 1.9+
+Hardware: NVIDIA RTX 3050 6GB (or compatible GPU)
+
+================================================================================
+                              END OF GUIDE
+================================================================================
+
+For more detailed information on specific topics, refer to the comprehensive
+markdown documentation files in the project directory.
+
+Main documentation files:
+- README.md              → Start here for project overview
+- QUICK_START.md         → Fast setup and basic usage
+- LIVE_INDEX.md          → Complete live processing navigation
+- OCR_SUMMARY.md         → OCR system overview
+- VIDEO_PIPELINE_README.md → Video processing guide
+
+Happy wagon inspecting! 🚂
