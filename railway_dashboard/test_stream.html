@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Video Stream</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: monospace;
+            padding: 20px;
+        }
+        video {
+            width: 640px;
+            height: 480px;
+            border: 2px solid #0f0;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>DroidCam Stream Test</h1>
+    <button id="startBtn">Start Stream</button>
+    <button id="stopBtn">Stop Stream</button>
+    <br><br>
+    <video id="video" autoplay muted playsinline></video>
+    <div class="status">
+        <div>Status: <span id="status">Not started</span></div>
+        <div>Video State: <span id="videoState">-</span></div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const status = document.getElementById('status');
+        const videoState = document.getElementById('videoState');
+        
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            try {
+                status.textContent = 'Starting camera...';
+                
+                // Call backend to start camera
+                const response = await fetch('/api/live/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                console.log('Start response:', data);
+                
+                if (data.status === 'success') {
+                    status.textContent = 'Camera started, loading stream...';
+                    
+                    // Set video source to stream
+                    video.src = '/api/live/stream';
+                    
+                    video.onloadeddata = () => {
+                        status.textContent = 'Stream loaded successfully!';
+                        videoState.textContent = 'Playing';
+                    };
+                    
+                    video.onerror = (e) => {
+                        status.textContent = 'Stream error: ' + e.type;
+                        videoState.textContent = 'Error';
+                        console.error('Video error:', e);
+                    };
+                } else {
+                    status.textContent = 'Failed to start: ' + data.message;
+                }
+            } catch (error) {
+                status.textContent = 'Error: ' + error.message;
+                console.error('Error:', error);
+            }
+        });
+        
+        document.getElementById('stopBtn').addEventListener('click', async () => {
+            video.pause();
+            video.src = '';
+            
+            const response = await fetch('/api/live/stop', {
+                method: 'POST'
+            });
+            
+            status.textContent = 'Stopped';
+            videoState.textContent = 'Stopped';
+        });
+        
+        // Update video state
+        setInterval(() => {
+            if (video.readyState > 0) {
+                videoState.textContent = `Ready (${video.readyState}): ${video.videoWidth}x${video.videoHeight}`;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
