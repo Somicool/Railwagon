@@ -1,0 +1,237 @@
+================================================================================
+HACKATHON SUBMISSION - COMPLETE PACKAGE
+================================================================================
+Generated: January 9, 2026
+Round: 1 (First Round Submission)
+Team: Railway Wagon Deblurring System
+================================================================================
+
+📦 SUBMISSION PACKAGE OVERVIEW
+================================================================================
+
+Your complete hackathon submission is ready in the folder:
+   HACKATHON_SUBMISSION/
+
+This package contains EVERYTHING requested for Round 1:
+
+✅ 1. Training Dataset
+   Location: ../train/train/ (blur/ and sharp/ folders)
+   Statistics: DATASET_STATISTICS.csv
+   Details: 1066 image pairs, 506x898 pixels, 91.7% blur severity
+
+✅ 2. Training Code  
+   File: TRAINING_CODE.py
+   Original: finetune_mimo_improved.py
+   Complete training implementation with all hyperparameters
+
+✅ 3. Hyperparameters Documentation
+   File: HYPERPARAMETERS.txt
+   Contains: All 50+ hyperparameters used during training
+   Categories: 10 sections covering every aspect of training
+
+✅ 4. Model Performance on Validation Dataset
+   File: VALIDATION_PERFORMANCE.txt
+   Best Result: 29.86 dB PSNR at epoch 29
+   Complete epoch-by-epoch training logs
+
+✅ 5. Dataset Statistics
+   File: DATASET_STATISTICS.csv
+   Details: Complete dataset metrics in spreadsheet format
+
+BONUS FILES INCLUDED:
+   - README.txt (submission overview & instructions)
+   - FILE_INDEX.txt (navigation guide)
+   - MODEL_ARCHITECTURE.py (MIMOUNetPlus model definition)
+
+================================================================================
+📊 KEY RESULTS
+================================================================================
+
+MODEL PERFORMANCE:
+   Best Validation PSNR: 29.86 dB (Epoch 29)
+   Test PSNR: 25.63 dB (10 samples)
+   Improvement over baseline: +4.56 dB (18.1% relative)
+   User Feedback: "deblurring is really good"
+
+DATASET:
+   Total Pairs: 1066 (blur + sharp)
+   Train/Val Split: 959 / 107 (90% / 10%)
+   Image Size: 506×898 pixels
+   Blur Severity: 91.7% sharpness loss
+
+HYPERPARAMETERS LOCKED FOR NEXT ROUNDS:
+   Epochs: 50 (stopped at 33)
+   Batch Size: 2
+   Learning Rate: 2e-4 (warmup + cosine decay)
+   Optimizer: AdamW (weight_decay=1e-4)
+   Loss: L1Loss
+   Patch Size: 384×384
+   Augmentation: 70% probability
+
+MODEL:
+   Architecture: MIMOUNetPlus
+   Parameters: ~1.2M trainable
+   Size: ~11.2 MB
+   Inference Speed: ~0.15s per image
+
+================================================================================
+📁 FOLDER STRUCTURE
+================================================================================
+
+HACKATHON_SUBMISSION/
+├── README.txt                      ← Start here (overview)
+├── FILE_INDEX.txt                  ← Navigation guide  
+├── HYPERPARAMETERS.txt             ← All training parameters
+├── VALIDATION_PERFORMANCE.txt      ← Results & metrics
+├── DATASET_STATISTICS.csv          ← Dataset info
+├── TRAINING_CODE.py                ← Training script
+└── MODEL_ARCHITECTURE.py           ← Model definition
+
+EXTERNAL REFERENCES (not in submission folder):
+../train/train/                     ← Dataset (1066 pairs)
+../checkpoints/best_model_improved.pkl  ← Trained weights (29.86 dB)
+../test_improved_model.py           ← Testing script
+
+================================================================================
+🚀 HOW TO USE THIS SUBMISSION
+================================================================================
+
+FOR HACKATHON JUDGES:
+
+1. START HERE:
+   - Open HACKATHON_SUBMISSION/README.txt
+   - Read complete submission overview
+
+2. REVIEW DATA:
+   - Open DATASET_STATISTICS.csv
+   - Dataset: ../train/train/blur and ../train/train/sharp
+   - 1066 image pairs, 506×898 pixels
+
+3. REVIEW HYPERPARAMETERS:
+   - Open HYPERPARAMETERS.txt
+   - All 50+ parameters documented
+   - Locked for next rounds (no optimization allowed)
+
+4. REVIEW PERFORMANCE:
+   - Open VALIDATION_PERFORMANCE.txt
+   - Best: 29.86 dB at epoch 29
+   - Epoch-by-epoch logs included
+
+5. REVIEW CODE:
+   - Open TRAINING_CODE.py (training implementation)
+   - Open MODEL_ARCHITECTURE.py (model definition)
+
+FOR REPRODUCTION:
+
+```bash
+# From the blur/ directory:
+python HACKATHON_SUBMISSION/TRAINING_CODE.py
+```
+
+This will:
+- Load dataset from train/train/blur and train/train/sharp
+- Use exact hyperparameters from HYPERPARAMETERS.txt
+- Train for 50 epochs
+- Save best model to checkpoints/best_model_improved.pkl
+- Expected result: ~29.86 dB at epoch 29
+
+FOR TESTING:
+
+```bash
+python test_improved_model.py
+```
+
+This will test the trained model and generate visual comparisons.
+
+================================================================================
+📋 HACKATHON REQUIREMENTS CHECKLIST
+================================================================================
+
+REQUIRED SUBMISSIONS:
+✅ Training dataset folder
+   → ../train/train/ (blur/ and sharp/)
+   → Statistics in DATASET_STATISTICS.csv
+
+✅ Training code
+   → TRAINING_CODE.py (complete implementation)
+   → MODEL_ARCHITECTURE.py (model definition)
+
+✅ Hyperparameters used
+   → HYPERPARAMETERS.txt (50+ parameters documented)
+   → ALL hyperparameters from training phase included
+   → Locked for next rounds
+
+✅ Model performance on validation dataset
+   → VALIDATION_PERFORMANCE.txt
+   → Best: 29.86 dB PSNR at epoch 29
+   → Complete training logs
+
+ADDITIONAL PROVIDED:
+✅ Dataset statistics in spreadsheet format
+✅ Complete README with instructions
+✅ File index for easy navigation
+✅ Trained model weights (best_model_improved.pkl)
+✅ Testing scripts
+
+================================================================================
+⚡ IMPORTANT NOTES FOR NEXT ROUNDS
+================================================================================
+
+🔒 HYPERPARAMETER LOCK:
+   As per rules: "Team won't be allowed to run hyperparameter optimizations 
+   at this stage and they will be asked to train only on the previously 
+   noted parameters."
+
+   All hyperparameters are documented in HYPERPARAMETERS.txt
+   These are LOCKED for subsequent rounds.
+   No changes allowed to:
+   - Learning rate (2e-4)
+   - Batch size (2)
+   - Patch size (384)
+   - Optimizer (AdamW)
+   - Loss function (L1Loss)
+   - Augmentation parameters
+   - Any other documented parameters
+
+📊 PERFORMANCE BASELINE:
+   Round 1 Result: 29.86 dB validation PSNR
+   This is the baseline for evaluating improvements in next rounds.
+
+🎯 MODEL WEIGHTS:
+   Best model saved at: ../checkpoints/best_model_improved.pkl
+   This checkpoint should be used for deployment/testing.
+
+================================================================================
+📞 CONTACT & SUBMISSION INFO
+================================================================================
+
+Submission Date: January 9, 2026
+Round: 1 (First Round)
+Model: MIMOUNetPlus (Fine-tuned)
+Best Performance: 29.86 dB validation PSNR
+
+All materials are original work created for this hackathon.
+For questions, contact through official hackathon channels.
+
+================================================================================
+✅ SUBMISSION READY!
+================================================================================
+
+Your hackathon submission package is complete and ready to submit.
+
+TO SUBMIT:
+1. Compress the HACKATHON_SUBMISSION/ folder
+2. Include reference to ../train/train/ dataset location
+3. Submit according to hackathon guidelines
+
+WHAT JUDGES WILL RECEIVE:
+✓ Complete training code
+✓ All hyperparameters documented
+✓ Validation performance results (29.86 dB)
+✓ Dataset statistics
+✓ Model architecture
+✓ Reproduction instructions
+
+GOOD LUCK! 🚀
+
+================================================================================

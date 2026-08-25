@@ -1,0 +1,168 @@
+=======================================================================
+HACKATHON SUBMISSION - FILE INDEX
+=======================================================================
+
+This folder contains the complete submission package for Round 1.
+
+FOLDER STRUCTURE:
+=======================================================================
+
+HACKATHON_SUBMISSION/
+│
+├── README.txt                      ← START HERE (submission overview)
+├── FILE_INDEX.txt                  ← This file (navigation guide)
+│
+├── HYPERPARAMETERS.txt             ← Complete hyperparameter documentation
+├── VALIDATION_PERFORMANCE.txt      ← Model performance metrics & results
+├── DATASET_STATISTICS.xlsx         ← Dataset statistics in Excel format
+│
+├── TRAINING_CODE.py                ← Training script (finetune_mimo_improved.py)
+├── MODEL_ARCHITECTURE.py           ← Model definition (MIMOUNetPlus)
+│
+└── (See below for external data references)
+
+EXTERNAL FILES (REFERENCED, NOT IN SUBMISSION FOLDER):
+=======================================================================
+
+Dataset Location: ../train/train/
+   ├── blur/    (1066 blurry images)
+   └── sharp/   (1066 sharp images)
+
+Model Weights: ../checkpoints/
+   ├── best_model_improved.pkl     ← BEST MODEL (29.86 dB)
+   └── best_model.pkl              ← Baseline (25.30 dB)
+
+Testing Scripts: ../
+   ├── test_improved_model.py      ← Test script for evaluation
+   └── quick_railway_test.py       ← Visual comparison tool
+
+=======================================================================
+QUICK START GUIDE
+=======================================================================
+
+FOR EVALUATORS:
+
+1. Read README.txt first (complete overview)
+2. Check DATASET_STATISTICS.xlsx (data overview)
+3. Review HYPERPARAMETERS.txt (all training parameters)
+4. Review VALIDATION_PERFORMANCE.txt (results)
+5. Inspect TRAINING_CODE.py (training implementation)
+6. Inspect MODEL_ARCHITECTURE.py (model definition)
+
+FOR REPRODUCTION:
+
+1. Ensure dataset is at: ../train/train/blur and ../train/train/sharp
+2. Run: python TRAINING_CODE.py
+3. Best model will be saved to: ../checkpoints/best_model_improved.pkl
+4. Expected result: 29.86 dB validation PSNR at epoch 29
+
+FOR TESTING:
+
+1. Run: python ../test_improved_model.py
+2. Visual comparison will be generated
+3. PSNR metrics will be displayed
+
+=======================================================================
+FILE DESCRIPTIONS
+=======================================================================
+
+README.txt (2.5 KB)
+   - Complete submission overview
+   - Package contents description
+   - Reproduction instructions
+   - System requirements
+   - Performance summary
+
+FILE_INDEX.txt (This file)
+   - Navigation guide
+   - File structure
+   - Quick start instructions
+
+HYPERPARAMETERS.txt (5.2 KB)
+   - Complete hyperparameter documentation
+   - All 10 categories of parameters
+   - Rationale for each choice
+   - 50+ documented parameters
+
+VALIDATION_PERFORMANCE.txt (7.8 KB)
+   - Epoch-by-epoch training logs
+   - Best model: 29.86 dB at epoch 29
+   - Performance metrics
+   - Comparison with baseline
+   - Visual quality assessment
+
+DATASET_STATISTICS.xlsx (8 KB)
+   - Total image pairs: 1066
+   - Train/Val split: 959/107
+   - Image dimensions: 506x898 pixels
+   - Format: JPEG, RGB, 8-bit
+   - Total dataset size
+
+TRAINING_CODE.py (9.2 KB)
+   - Complete training script
+   - Data loading & augmentation
+   - Training loop
+   - Validation & checkpointing
+   - Same as finetune_mimo_improved.py
+
+MODEL_ARCHITECTURE.py (15.6 KB)
+   - MIMOUNetPlus model definition
+   - All modules (FAM, SCM, AFF)
+   - Multi-scale architecture
+   - Same as models/mimo_unet_plus.py
+
+=======================================================================
+SUBMISSION CHECKLIST
+=======================================================================
+
+Required Items:
+✓ Training dataset folder (../train/train/)
+✓ Training code (TRAINING_CODE.py)
+✓ Hyperparameters documentation (HYPERPARAMETERS.txt)
+✓ Model performance on validation (VALIDATION_PERFORMANCE.txt)
+✓ Dataset statistics (DATASET_STATISTICS.xlsx)
+
+Additional Items Provided:
+✓ Complete README (README.txt)
+✓ File index (FILE_INDEX.txt)
+✓ Model architecture code (MODEL_ARCHITECTURE.py)
+✓ Trained model weights (../checkpoints/best_model_improved.pkl)
+✓ Testing scripts (../test_improved_model.py)
+
+=======================================================================
+KEY RESULTS SUMMARY
+=======================================================================
+
+Dataset:
+   - Size: 1066 image pairs (blur + sharp)
+   - Split: 90% train (959), 10% val (107)
+   - Resolution: 506x898 pixels
+   - Blur Severity: 91.7% sharpness loss
+
+Training:
+   - Model: MIMOUNetPlus
+   - Epochs: 33 (target 50, stopped early)
+   - Best Epoch: 29
+   - Batch Size: 2
+   - Learning Rate: 2e-4 (warmup + cosine)
+
+Performance:
+   - Best Validation PSNR: 29.86 dB
+   - Test PSNR: 25.63 dB (10 samples)
+   - Improvement over baseline: +4.56 dB
+   - User feedback: "deblurring is really good"
+
+=======================================================================
+CONTACT INFORMATION
+=======================================================================
+
+For questions regarding this submission:
+   - Contact through official hackathon channels
+   - All materials are original work by our team
+
+Submission Date: January 9, 2026
+Round: 1 (First Round)
+
+=======================================================================
+END OF FILE INDEX
+=======================================================================
