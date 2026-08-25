@@ -1,0 +1,34 @@
+LOGO SETUP INSTRUCTIONS
+========================
+
+To add your RAILwagon logo to the website:
+
+1. Save the logo image that you provided as "logo.png" in the railway_dashboard folder
+   Location: c:\Users\Soham\OneDrive\Desktop\blur (2)\blur\blur\railway_dashboard\logo.png
+
+2. The logo should be a PNG file with transparent background (recommended)
+
+3. Recommended image dimensions: 
+   - Width: 400-500 pixels
+   - Height: 400-500 pixels (square format works best)
+   - The CSS will automatically resize it to fit
+
+4. After saving the logo.png file, refresh your browser to see the changes
+
+The logo will appear in two places:
+- Login screen: Top center, above the title
+- Dashboard header: Top left corner, next to the system title
+
+If you want to use a different filename, you can update these files:
+- index.html: Change "logo.png" to your filename in two places
+  - Line ~20 (login screen)
+  - Line ~50 (dashboard header)
+
+Current styling applied:
+- Login screen logo: 120px width with cyan glow effect
+- Dashboard header logo: 50px height with cyan glow effect
+- Both logos have a subtle drop-shadow for better visibility
+
+To adjust logo size, modify these CSS classes in style.css:
+- .logo-image (login screen logo)
+- .logo-mini-image (dashboard header logo)

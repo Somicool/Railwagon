@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAILwagon Inspection System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- ============================================ -->
+    <!-- LOGIN SCREEN -->
+    <!-- ============================================ -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="Black Train Transportation Business Logo.png" alt="RAILwagon Logo" class="logo-image">
+                <h1>RAILWAY WAGON INSPECTION SYSTEM</h1>
+                <p class="login-subtitle">OPERATOR AUTHENTICATION</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="operatorName">OPERATOR NAME</label>
+                    <input type="text" id="operatorName" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="operatorEmail">OPERATOR EMAIL</label>
+                    <input type="email" id="operatorEmail" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn-primary">AUTHENTICATE</button>
+            </form>
+            <div class="login-footer">
+                <span class="status-indicator"></span>
+                <span>SYSTEM READY</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MAIN DASHBOARD -->
+    <!-- ============================================ -->
+    <div id="mainDashboard" class="screen">
+        
+        <!-- HEADER BAR -->
+        <header class="dashboard-header">
+            <div class="header-left-content">
+                <img src="Black Train Transportation Business Logo.png" alt="RAILwagon Logo" class="logo-mini-image" onerror="this.style.display='none'; console.error('Logo failed to load');">
+                <div class="header-branding">
+                    <div class="logo-mini">R<span class="ai-text">AI</span>Lwagon</div>
+                    <div class="system-subtitle">RAILWAY WAGON INSPECTION SYSTEM</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="operator-info">
+                    <span class="label">OPERATOR:</span>
+                    <span id="loggedOperator"></span>
+                </span>
+                <button id="logoutBtn" class="btn-secondary">LOGOUT</button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="dashboard-body">
+            
+            <!-- SIDEBAR NAVIGATION (Initially hidden) -->
+            <aside id="sidebar" class="sidebar">
+                <nav class="nav-menu">
+                    <button class="nav-item" data-page="liveVideo">
+                        <span class="nav-icon">&#9632;</span>
+                        <span class="nav-label">LIVE VIDEO</span>
+                    </button>
+                    <button class="nav-item" data-page="recordedVideo">
+                        <span class="nav-icon">&#9654;</span>
+                        <span class="nav-label">RECORDED VIDEO</span>
+                    </button>
+                    <button class="nav-item" data-page="imageInspection">
+                        <span class="nav-icon">&#9776;</span>
+                        <span class="nav-label">IMAGE INSPECTION</span>
+                    </button>
+                    <button class="nav-item" data-page="analysis">
+                        <span class="nav-icon">&#9650;</span>
+                        <span class="nav-label">ANALYSIS</span>
+                    </button>
+                    <button class="nav-item" data-page="records">
+                        <span class="nav-icon">&#9658;</span>
+                        <span class="nav-label">RECORDS</span>
+                    </button>
+                    <button class="nav-item" data-page="incidents">
+                        <span class="nav-icon">🚨</span>
+                        <span class="nav-label">AI INCIDENTS</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- MAIN SELECTION SCREEN (Initial) -->
+            <div id="selectionScreen" class="selection-screen">
+                <div class="selection-grid">
+                    <button class="selection-card" data-page="liveVideo">
+                        <div class="card-icon">&#9632;</div>
+                        <div class="card-title">LIVE VIDEO INSPECTION</div>
+                        <div class="card-desc">Real-time wagon analysis</div>
+                    </button>
+                    <div class="selection-grid-bottom">
+                        <button class="selection-card" data-page="recordedVideo">
+                            <div class="card-icon">&#9654;</div>
+                            <div class="card-title">RECORDED VIDEO</div>
+                            <div class="card-desc">Process video files</div>
+                        </button>
+                        <button class="selection-card" data-page="imageInspection">
+                            <div class="card-icon">&#9776;</div>
+                            <div class="card-title">IMAGE INSPECTION</div>
+                            <div class="card-desc">Single frame analysis</div>
+                        </button>
+                        <button class="selection-card" data-page="analysis">
+                            <div class="card-icon">&#9650;</div>
+                            <div class="card-title">ANALYSIS</div>
+                            <div class="card-desc">Inspection reports</div>
+                        </button>
+                        <button class="selection-card" data-page="records">
+                            <div class="card-icon">&#128194;</div>
+                            <div class="card-title">RECORDS</div>
+                            <div class="card-desc">Session history</div>
+                        </button>
+                        <button class="selection-card" data-page="incidents">
+                            <div class="card-icon">🚨</div>
+                            <div class="card-title">AI INCIDENTS</div>
+                            <div class="card-desc">Smart incident response</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- LIVE VIDEO INSPECTION PAGE -->
+            <!-- ============================================ -->
+            <div id="liveVideoPage" class="page-content">
+                <div class="page-header">
+                    <h2>LIVE VIDEO INSPECTION</h2>
+                    <div class="page-status">
+                        <span class="status-dot" id="liveStatus"></span>
+                        <span id="liveStatusText">STANDBY</span>
+                    </div>
+                </div>
+
+                <div class="inspection-layout">
+                    <!-- LEFT: Controls & Video -->
+                    <div class="inspection-main">
+                        <!-- Control Panel -->
+                        <div class="control-panel">
+                            <button id="startLiveBtn" class="btn-control btn-primary">START LIVE VIDEO</button>
+                            <button id="startLiveInspectionBtn" class="btn-control btn-warning" disabled>START INSPECTION</button>
+                            <button id="stopLiveInspectionBtn" class="btn-control btn-danger" disabled>STOP INSPECTION</button>
+                            <button id="restartLiveBtn" class="btn-control btn-primary" style="display: none;">RESTART LIVE VIDEO</button>
+                        </div>
+
+                        <!-- Motion Detection Auto Mode Panel -->
+                        <div class="motion-detection-panel">
+                            <div class="motion-header">
+                                <h4>MOTION DETECTION AUTO MODE</h4>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <button id="simulateTrainBtn" class="btn-simulate" disabled>SIMULATE TRAIN</button>
+                                    <label class="auto-toggle">
+                                        <input type="checkbox" id="autoModeToggle" checked>
+                                        <span class="toggle-slider"></span>
+                                        <span id="autoModeLabel" class="toggle-label">ON</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="motion-status-display">
+                                <div class="motion-state" id="motionStateDisplay">
+                                    <span class="motion-indicator" id="motionIndicator"></span>
+                                    <span id="motionStateText">IDLE</span>
+                                </div>
+                                <div class="motion-info">
+                                    <div class="motion-metric">
+                                        <span class="metric-label">MOTION LEVEL</span>
+                                        <span id="motionLevel" class="metric-value">0%</span>
+                                    </div>
+                                    <div class="motion-metric">
+                                        <span class="metric-label">TRAIN CONFIRMED</span>
+                                        <span id="trainConfirmedStatus" class="train-status">NO</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="motion-events" id="motionEvents">
+                                <div class="event-log-header">EVENT LOG</div>
+                                <div class="event-log-content" id="eventLogContent">
+                                    <div class="event-placeholder">AUTO MODE DISABLED</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Video Feed -->
+                        <div class="video-container">
+                            <div class="video-header">LIVE FEED (RAW)</div>
+                            <img id="liveVideoFeed" class="video-display" style="display:none;">
+                            <video id="liveVideoFeedVideo" class="video-display" autoplay muted playsinline style="display:none;"></video>
+                            <div class="video-overlay" id="liveVideoOverlay">
+                                <span>NO SIGNAL</span>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Deblurred Frames -->
+                        <div class="deblur-section">
+                            <h3 class="section-title">REAL-TIME DEBLURRED FRAMES</h3>
+                            <div id="deblurredFrames" class="frame-grid">
+                                <div class="frame-placeholder">AWAITING DATA</div>
+                            </div>
+                        </div>
+
+                        <!-- Quality & OCR Status -->
+                        <div class="status-section">
+                            <div class="status-col">
+                                <h4>BLUR QUALITY</h4>
+                                <div class="progress-bar">
+                                    <div id="blurQuality" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span id="blurQualityText">0%</span>
+                            </div>
+                            <div class="status-col">
+                                <h4>OCR STATUS</h4>
+                                <div id="ocrStatus" class="ocr-indicator">PENDING</div>
+                            </div>
+                        </div>
+
+                        <!-- Wagon Number Detected Images -->
+                        <div class="wagon-section">
+                            <h3 class="section-title">DETECTED WAGON NUMBERS</h3>
+                            <div id="wagonDetections" class="wagon-grid">
+                                <div class="frame-placeholder">NO DETECTIONS</div>
+                            </div>
+                        </div>
+
+                        <!-- Before/After Comparison -->
+                        <div class="comparison-section">
+                            <h3 class="section-title">BEFORE / AFTER COMPARISON</h3>
+                            <div class="comparison-container">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">ORIGINAL (BLURRED)</div>
+                                    <div id="beforeImage" class="comparison-image">
+                                        <div class="frame-placeholder">NO DATA</div>
+                                    </div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">DEBLURRED</div>
+                                    <div id="afterImage" class="comparison-image">
+                                        <div class="frame-placeholder">NO DATA</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Damage Detection Section -->
+                        <div class="damage-section">
+                            <h3 class="section-title">WAGON DAMAGE DETECTION</h3>
+                            <div id="liveDamageStatus" class="damage-status">
+                                <div class="damage-indicator no-damage">
+                                    <span class="damage-icon">✓</span>
+                                    <span class="damage-text">NO DAMAGE DETECTED</span>
+                                </div>
+                            </div>
+                            <div id="liveDamageDetails" class="damage-details" style="display: none;">
+                                <!-- Populated dynamically when damage is detected -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: System Status Panel -->
+                    <div class="system-panel">
+                        <h3>SYSTEM STATUS</h3>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span class="status-label">FPS</span>
+                                <span id="liveFps" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">LATENCY (ms)</span>
+                                <span id="liveLatency" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">MODE</span>
+                                <span id="liveMode" class="status-value">MANUAL</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">DEVICE</span>
+                                <span id="liveDevice" class="status-value">CPU</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">FRAMES PROCESSED</span>
+                                <span id="liveFramesProcessed" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">DETECTIONS</span>
+                                <span id="liveDetections" class="status-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- RECORDED VIDEO INSPECTION PAGE -->
+            <!-- ============================================ -->
+            <div id="recordedVideoPage" class="page-content">
+                <div class="page-header">
+                    <h2>RECORDED VIDEO INSPECTION</h2>
+                    <div class="page-status">
+                        <span class="status-dot" id="recordedStatus"></span>
+                        <span id="recordedStatusText">STANDBY</span>
+                    </div>
+                </div>
+
+                <div class="inspection-layout">
+                    <!-- LEFT: Controls & Video -->
+                    <div class="inspection-main">
+                        <!-- Control Panel -->
+                        <div class="control-panel">
+                            <div class="file-upload-wrapper">
+                                <label for="videoFileInput" class="btn-control btn-primary">SELECT VIDEO FILE</label>
+                                <input type="file" id="videoFileInput" accept="video/*" style="display: none;">
+                                <span id="videoFileName" class="file-name">NO FILE SELECTED</span>
+                            </div>
+                            <button id="startRecordedInspectionBtn" class="btn-control btn-warning" disabled>START INSPECTION</button>
+                            <button id="stopRecordedInspectionBtn" class="btn-control btn-danger" disabled>STOP INSPECTION</button>
+                            <button id="uploadAnotherVideoBtn" class="btn-control btn-primary" style="display: none;">UPLOAD ANOTHER VIDEO</button>
+                        </div>
+
+                        <!-- Video Feed -->
+                        <div class="video-container">
+                            <div class="video-header">VIDEO PLAYBACK</div>
+                            <video id="recordedVideoFeed" class="video-display" controls></video>
+                            <div class="video-overlay" id="recordedVideoOverlay">
+                                <span>NO VIDEO LOADED</span>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Deblurred Frames -->
+                        <div class="deblur-section">
+                            <h3 class="section-title">REAL-TIME DEBLURRED FRAMES</h3>
+                            <div id="recordedDeblurredFrames" class="frame-grid">
+                                <div class="frame-placeholder">AWAITING DATA</div>
+                            </div>
+                        </div>
+
+                        <!-- Quality & OCR Status -->
+                        <div class="status-section">
+                            <div class="status-col">
+                                <h4>BLUR QUALITY</h4>
+                                <div class="progress-bar">
+                                    <div id="recordedBlurQuality" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span id="recordedBlurQualityText">0%</span>
+                            </div>
+                            <div class="status-col">
+                                <h4>OCR STATUS</h4>
+                                <div id="recordedOcrStatus" class="ocr-indicator">PENDING</div>
+                            </div>
+                        </div>
+
+                        <!-- Wagon Number Detected Images -->
+                        <div class="wagon-section">
+                            <h3 class="section-title">DETECTED WAGON NUMBERS</h3>
+                            <div id="recordedWagonDetections" class="wagon-grid">
+                                <div class="frame-placeholder">NO DETECTIONS</div>
+                            </div>
+                        </div>
+
+                        <!-- Before/After Comparison -->
+                        <div class="comparison-section">
+                            <h3 class="section-title">BEFORE / AFTER COMPARISON</h3>
+                            <div class="comparison-container">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">ORIGINAL (BLURRED)</div>
+                                    <div id="recordedBeforeImage" class="comparison-image">
+                                        <div class="frame-placeholder">NO DATA</div>
+                                    </div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">DEBLURRED</div>
+                                    <div id="recordedAfterImage" class="comparison-image">
+                                        <div class="frame-placeholder">NO DATA</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Damage Detection Section -->
+                        <div class="damage-section">
+                            <h3 class="section-title">WAGON DAMAGE DETECTION</h3>
+                            <div id="recordedDamageStatus" class="damage-status">
+                                <div class="damage-indicator no-damage">
+                                    <span class="damage-icon">✓</span>
+                                    <span class="damage-text">NO DAMAGE DETECTED</span>
+                                </div>
+                            </div>
+                            <div id="recordedDamageDetails" class="damage-details" style="display: none;">
+                                <!-- Populated dynamically when damage is detected -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: System Status Panel -->
+                    <div class="system-panel">
+                        <h3>SYSTEM STATUS</h3>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span class="status-label">FPS</span>
+                                <span id="recordedFps" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">LATENCY (ms)</span>
+                                <span id="recordedLatency" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">MODE</span>
+                                <span id="recordedMode" class="status-value">AUTO</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">DEVICE</span>
+                                <span id="recordedDevice" class="status-value">CPU</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">FRAMES PROCESSED</span>
+                                <span id="recordedFramesProcessed" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">DETECTIONS</span>
+                                <span id="recordedDetections" class="status-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- IMAGE INSPECTION PAGE -->
+            <!-- ============================================ -->
+            <div id="imageInspectionPage" class="page-content">
+                <div class="page-header">
+                    <h2>IMAGE INSPECTION</h2>
+                    <div class="page-status">
+                        <span class="status-dot" id="imageStatus"></span>
+                        <span id="imageStatusText">STANDBY</span>
+                    </div>
+                </div>
+
+                <div class="inspection-layout">
+                    <div class="inspection-main">
+                        <!-- Control Panel -->
+                        <div class="control-panel">
+                            <div class="file-upload-wrapper">
+                                <label for="imageFileInput" class="btn-control btn-primary">SELECT IMAGE FILE</label>
+                                <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+                                <span id="imageFileName" class="file-name">NO FILE SELECTED</span>
+                            </div>
+                            <button id="processImageBtn" class="btn-control btn-warning" disabled>PROCESS IMAGE</button>
+                        </div>
+
+                        <!-- Image Comparison -->
+                        <div class="comparison-section">
+                            <div class="comparison-container">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">ORIGINAL IMAGE</div>
+                                    <div id="originalImage" class="comparison-image large">
+                                        <div class="frame-placeholder">NO IMAGE LOADED</div>
+                                    </div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">DEBLURRED IMAGE</div>
+                                    <div id="deblurredImage" class="comparison-image large">
+                                        <div class="frame-placeholder">AWAITING PROCESSING</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wagon Number Detection -->
+                        <div class="wagon-section" id="imageWagonSection" style="display: none;">
+                            <h3 class="section-title">DETECTED WAGON NUMBER</h3>
+                            <div id="imageWagonDetection" class="wagon-grid">
+                                <div class="frame-placeholder">NO DETECTION</div>
+                            </div>
+                        </div>
+
+                        <!-- Damage Detection Section -->
+                        <div class="damage-section">
+                            <h3 class="section-title">WAGON DAMAGE DETECTION</h3>
+                            <div id="imageDamageStatus" class="damage-status">
+                                <div class="damage-indicator no-damage">
+                                    <span class="damage-icon">✓</span>
+                                    <span class="damage-text">NO DAMAGE DETECTED</span>
+                                </div>
+                            </div>
+                            <div id="imageDamageDetails" class="damage-details" style="display: none;">
+                                <!-- Populated dynamically when damage is detected -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: System Status Panel -->
+                    <div class="system-panel">
+                        <h3>SYSTEM STATUS</h3>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span class="status-label">PROCESSING TIME</span>
+                                <span id="imageProcessTime" class="status-value">0 ms</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">MODE</span>
+                                <span id="imageMode" class="status-value">AUTO</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">DEVICE</span>
+                                <span id="imageDevice" class="status-value">CPU</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">IMAGE SIZE</span>
+                                <span id="imageSize" class="status-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- ANALYSIS PAGE -->
+            <!-- ============================================ -->
+            <div id="analysisPage" class="page-content">
+                <div class="page-header">
+                    <h2>ANALYSIS</h2>
+                    <div class="page-status" id="analysisDisabledMsg">
+                        <span class="status-dot disabled"></span>
+                        <span>DISABLED - NO INSPECTIONS COMPLETED</span>
+                    </div>
+                </div>
+
+                <div id="analysisContent" class="analysis-content">
+                    <!-- Session Selection Section -->
+                    <div class="analysis-section" id="sessionSelectionSection">
+                        <h3 class="section-title">SELECT RECORDED INSPECTION</h3>
+                        <div class="session-selection-grid" id="sessionSelectionGrid">
+                            <!-- Sessions will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Top 10 Frames Section (Initially Hidden) -->
+                    <div class="analysis-section" id="topFramesSection" style="display: none;">
+                        <div class="section-header-with-back">
+                            <button class="btn-back" id="backToSessionsBtn" onclick="backToSessionSelection()">
+                                <span>&#8592;</span> BACK TO SESSIONS
+                            </button>
+                            <h3 class="section-title">TOP 10 FRAMES - HIGHEST QUALITY</h3>
+                        </div>
+                        <div class="session-info-bar" id="selectedSessionInfo">
+                            <!-- Selected session info will appear here -->
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>RANK</th>
+                                        <th>FRAME ID</th>
+                                        <th>ORIGINAL QUALITY</th>
+                                        <th>DEBLURRED QUALITY</th>
+                                        <th>IMPROVEMENT</th>
+                                        <th>WAGON NUMBER</th>
+                                        <th>PREVIEW</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topFramesTable">
+                                    <tr>
+                                        <td colspan="7" class="no-data">SELECT A SESSION TO VIEW TOP FRAMES</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- RECORDS PAGE -->
+            <!-- ============================================ -->
+            <div id="recordsPage" class="page-content">
+                <div class="page-header">
+                    <h2>INSPECTION RECORDS</h2>
+                </div>
+
+                <!-- Tabs for Active and Recently Deleted -->
+                <div class="records-tabs">
+                    <button class="records-tab active" data-tab="active" onclick="switchRecordsTab('active')">
+                        <span class="tab-icon">📋</span>
+                        <span class="tab-label">ACTIVE RECORDS</span>
+                    </button>
+                    <button class="records-tab" data-tab="deleted" onclick="switchRecordsTab('deleted')">
+                        <span class="tab-icon">🗑️</span>
+                        <span class="tab-label">RECENTLY DELETED</span>
+                        <span class="tab-badge" id="deletedCountBadge" style="display: none;">0</span>
+                    </button>
+                </div>
+
+                <!-- Active Records Content -->
+                <div class="records-content" id="activeRecordsContent">
+                    <div id="sessionsList" class="sessions-list">
+                        <div class="no-sessions">NO INSPECTION SESSIONS RECORDED</div>
+                    </div>
+                </div>
+
+                <!-- Recently Deleted Content -->
+                <div class="records-content" id="deletedRecordsContent" style="display: none;">
+                    <div class="deleted-info-banner">
+                        <span class="info-icon">ℹ️</span>
+                        <span>Deleted records are kept for 7 days before permanent deletion</span>
+                    </div>
+                    <div id="deletedSessionsList" class="sessions-list">
+                        <div class="no-sessions">NO RECENTLY DELETED SESSIONS</div>
+                    </div>
+                </div>
+
+                <!-- Session Detail Modal -->
+                <div id="sessionModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="sessionModalTitle">SESSION DETAILS</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="delete-session-btn" onclick="deleteCurrentSession()" title="Delete Session">
+                                    🗑️ DELETE
+                                </button>
+                                <button class="modal-close" id="closeSessionModal">&times;</button>
+                            </div>
+                        </div>
+                        <div class="modal-body" id="sessionModalBody">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deleted Session Detail Modal -->
+                <div id="deletedSessionModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="deletedSessionModalTitle">DELETED SESSION DETAILS</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="restore-session-btn" onclick="restoreCurrentSession()" title="Restore Session">
+                                    ↩️ RESTORE
+                                </button>
+                                <button class="permanent-delete-btn" onclick="permanentDeleteCurrentSession()" title="Delete Permanently">
+                                    ⚠️ DELETE PERMANENTLY
+                                </button>
+                                <button class="modal-close" id="closeDeletedSessionModal">&times;</button>
+                            </div>
+                        </div>
+                        <div class="modal-body" id="deletedSessionModalBody">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- AI CHAT ASSISTANT PAGE -->
+            <!-- ============================================ -->
+            <div id="incidentsPage" class="page-content">
+                <div class="page-header">
+                    <h2>🤖 AI ASSISTANT</h2>
+                    <p style="color: var(--text-secondary); margin-top: 10px;">Ask me anything about your inspection records and incidents</p>
+                </div>
+
+                <!-- Chat Container -->
+                <div style="display: grid; grid-template-columns: 1fr; gap: 0; height: calc(100vh - 250px); background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 2px solid var(--border-color);">
+                    
+                    <!-- Chat Messages Area -->
+                    <div id="chatMessages" style="
+                        flex: 1;
+                        overflow-y: auto;
+                        padding: 25px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px;
+                        background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+                    ">
+                        <!-- Welcome Message -->
+                        <div class="chat-message ai-message" style="
+                            background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,200,100,0.15));
+                            border-left: 4px solid var(--accent-primary);
+                            padding: 20px;
+                            border-radius: 12px;
+                            max-width: 80%;
+                            align-self: flex-start;
+                        ">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <span style="font-size: 24px;">🤖</span>
+                                <span style="font-weight: 600; color: var(--accent-primary);">AI Assistant</span>
+                            </div>
+                            <div style="color: var(--text-primary); line-height: 1.6;">
+                                Hello! I'm your AI assistant. I can help you with:<br><br>
+                                • Analyzing inspection records and statistics<br>
+                                • Finding specific wagons or incidents<br>
+                                • Answering questions about damage patterns<br>
+                                • Providing recommendations based on history<br><br>
+                                Try asking me something like: <i>"Show me all wagons inspected today"</i> or <i>"What incidents had structural damage?"</i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div style="padding: 15px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <button onclick="askQuickQuestion('How many wagons were inspected today?')" style="
+                                padding: 8px 16px;
+                                background: rgba(0,255,136,0.1);
+                                border: 1px solid var(--accent-primary);
+                                color: var(--accent-primary);
+                                border-radius: 20px;
+                                font-size: 12px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            " onmouseover="this.style.background='rgba(0,255,136,0.2)'" onmouseout="this.style.background='rgba(0,255,136,0.1)'">
+                                📊 Wagons inspected today
+                            </button>
+                            <button onclick="askQuickQuestion('Show me all incidents with structural damage')" style="
+                                padding: 8px 16px;
+                                background: rgba(0,255,136,0.1);
+                                border: 1px solid var(--accent-primary);
+                                color: var(--accent-primary);
+                                border-radius: 20px;
+                                font-size: 12px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            " onmouseover="this.style.background='rgba(0,255,136,0.2)'" onmouseout="this.style.background='rgba(0,255,136,0.1)'">
+                                🚨 Structural damage incidents
+                            </button>
+                            <button onclick="askQuickQuestion('What are the response time statistics?')" style="
+                                padding: 8px 16px;
+                                background: rgba(0,255,136,0.1);
+                                border: 1px solid var(--accent-primary);
+                                color: var(--accent-primary);
+                                border-radius: 20px;
+                                font-size: 12px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            " onmouseover="this.style.background='rgba(0,255,136,0.2)'" onmouseout="this.style.background='rgba(0,255,136,0.1)'">
+                                ⏱️ Response times
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div style="padding: 20px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <input 
+                                type="text" 
+                                id="chatInput" 
+                                placeholder="Ask me anything about inspections, incidents, or damage reports..."
+                                style="
+                                    flex: 1;
+                                    padding: 15px 20px;
+                                    background: var(--input-bg);
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 25px;
+                                    color: var(--text-primary);
+                                    font-size: 14px;
+                                    outline: none;
+                                    transition: border-color 0.3s;
+                                "
+                                onkeypress="if(event.key === 'Enter') sendChatMessage()"
+                                onfocus="this.style.borderColor='var(--accent-primary)'"
+                                onblur="this.style.borderColor='var(--border-color)'"
+                            />
+                            <button 
+                                onclick="sendChatMessage()" 
+                                class="btn-primary"
+                                style="
+                                    padding: 15px 30px;
+                                    border-radius: 25px;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    font-weight: 600;
+                                "
+                            >
+                                <span>SEND</span>
+                                <span style="font-size: 18px;">➤</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incidents List (Hidden by default, shown when requested) -->
+                <div id="incidentsListSection" style="display: none; margin-top: 30px;">
+                    <div class="page-header" style="margin-bottom: 20px;">
+                        <h3>📋 Incident Records</h3>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%); padding: 20px; border-radius: 8px;">
+                            <div style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 8px;">CRITICAL</div>
+                            <div id="criticalCount" style="font-size: 32px; font-weight: 700; color: white;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); padding: 20px; border-radius: 8px;">
+                            <div style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 8px;">HIGH</div>
+                            <div id="highCount" style="font-size: 32px; font-weight: 700; color: white;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ffa000 100%); padding: 20px; border-radius: 8px;">
+                            <div style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 8px;">MEDIUM</div>
+                            <div id="mediumCount" style="font-size: 32px; font-weight: 700; color: white;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); padding: 20px; border-radius: 8px;">
+                            <div style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 8px;">RESOLVED</div>
+                            <div id="resolvedCount" style="font-size: 32px; font-weight: 700; color: white;">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters-bar" style="display: flex; gap: 15px; margin-bottom: 25px; align-items: center;">
+                        <select id="incidentSeverityFilter" style="padding: 10px; background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px;">
+                            <option value="">All Severities</option>
+                            <option value="critical">Critical</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                        
+                        <select id="incidentStatusFilter" style="padding: 10px; background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px;">
+                            <option value="">All Statuses</option>
+                            <option value="detected">Detected</option>
+                            <option value="acknowledged">Acknowledged</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                        
+                        <button onclick="loadIncidents()" class="btn-primary" style="padding: 10px 20px;">
+                            🔄 REFRESH
+                        </button>
+                    </div>
+
+                    <!-- Incidents List -->
+                    <div id="incidentsList" class="incidents-list" style="display: grid; gap: 20px;">
+                        <div class="no-data">Loading incidents...</div>
+                    </div>
+
+                <!-- Incident Detail Modal -->
+                <div id="incidentModal" class="modal">
+                    <div class="modal-content" style="max-width: 900px;">
+                        <div class="modal-header">
+                            <h3>INCIDENT DETAILS</h3>
+                            <button class="modal-close" onclick="closeIncidentModal()">&times;</button>
+                        </div>
+                        <div class="modal-body" id="incidentDetailContent">
+                            <!-- Content loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Image Viewer Modal - GLOBAL (outside all pages) -->
+        <div id="imageViewerModal" class="modal">
+            <div class="modal-content" style="max-width: 98vw; max-height: 98vh; width: 98vw; height: 98vh;">
+                <div class="modal-header">
+                    <h3 id="imageViewerTitle">IMAGE VIEWER</h3>
+                    <button class="modal-close" onclick="closeImageViewer()">&times;</button>
+                </div>
+                <div class="modal-body" id="imageViewerBody" style="display: flex; justify-content: center; align-items: center; height: calc(98vh - 80px); gap: 30px; padding: var(--spacing-lg);">
+                    <!-- Single image view -->
+                    <img id="imageViewerImg" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: none;" />
+                    <!-- Comparison view -->
+                    <div id="comparisonViewContainer" style="display: none; width: 100%; height: 100%; gap: 30px;">
+                        <div style="flex: 1; display: flex; flex-direction: column; height: 100%;">
+                            <h4 style="color: var(--text-secondary); margin-bottom: 15px; font-size: 16px; font-weight: 600; letter-spacing: 1px;">ORIGINAL (BLURRED)</h4>
+                            <img id="comparisonOriginal" style="width: 100%; height: 100%; object-fit: contain; border: 3px solid #666;" />
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; height: 100%;">
+                            <h4 style="color: var(--accent-primary); margin-bottom: 15px; font-size: 16px; font-weight: 600; letter-spacing: 1px;">DEBLURRED</h4>
+                            <img id="comparisonDeblurred" style="width: 100%; height: 100%; object-fit: contain; border: 3px solid var(--accent-primary);" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal - GLOBAL -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3 id="confirmModalTitle">CONFIRM ACTION</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmModalMessage" style="color: var(--text-primary); font-size: 14px; line-height: 1.6; margin-bottom: 24px;"></p>
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button id="confirmModalCancel" class="btn-secondary" style="padding: 10px 24px;">CANCEL</button>
+                        <button id="confirmModalConfirm" class="btn-primary" style="padding: 10px 24px;">CONFIRM</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
