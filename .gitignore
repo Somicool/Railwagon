@@ -57,8 +57,7 @@ uploads/
 # Videos (large binaries)
 *.mp4
 
-# HACKATHON_SUBMISSION duplicate bundle
-HACKATHON_SUBMISSION/
+# Duplicate gdrive submission bundle
 railway_dashboard/gdrive/
 
 # OS / editor
