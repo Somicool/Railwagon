@@ -59,6 +59,7 @@ uploads/
 
 # HACKATHON_SUBMISSION duplicate bundle
 HACKATHON_SUBMISSION/
+railway_dashboard/gdrive/
 
 # OS / editor
 .DS_Store
