@@ -1,0 +1,39 @@
+# rAIlwagon - AI-Powered Railway Incident Response System
+# Python Dependencies
+
+# Web Framework
+flask==3.0.0
+flask-cors==4.0.0
+werkzeug==3.0.1
+
+# AI/ML - Core
+torch==2.1.0
+torchvision==0.16.0
+
+# AI/ML - Sentence Transformers & Vector Search
+sentence-transformers==2.2.2
+faiss-cpu==1.7.4
+transformers==4.35.0
+
+# Computer Vision
+opencv-python==4.8.1.78
+Pillow==10.1.0
+
+# OCR
+pytesseract==0.3.10
+
+# Scientific Computing
+numpy==1.24.3
+scipy==1.11.4
+
+# Data Handling
+pandas==2.1.3
+
+# Utilities
+python-dateutil==2.8.2
+requests==2.31.0
+
+# Development (Optional)
+pytest==7.4.3
+black==23.11.0
+flake8==6.1.0
