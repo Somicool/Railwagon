@@ -1,0 +1,117 @@
+================================================================================
+HACKATHON SUBMISSION - HYPERPARAMETERS DOCUMENTATION
+================================================================================
+Team: Railway Wagon Deblurring System
+Model: MIMOUNetPlus (Multi-Input Multi-Output UNet Plus)
+Training Script: finetune_mimo_improved.py
+Date: January 9, 2026
+================================================================================
+
+TRAINING HYPERPARAMETERS
+================================================================================
+
+1. BASIC TRAINING PARAMETERS
+   - Total Epochs: 50
+   - Batch Size: 2
+   - Learning Rate: 2e-4 (0.0002)
+   - Optimizer: AdamW
+   - Weight Decay: 1e-4 (0.0001)
+   - Loss Function: L1Loss (Mean Absolute Error)
+   
+2. LEARNING RATE SCHEDULE
+   - Type: Warmup + Cosine Annealing
+   - Warmup Epochs: 3
+   - Warmup Strategy: Linear increase from 0 to base LR
+   - Main Schedule: Cosine decay after warmup
+   - Formula: 
+     * Warmup (epoch < 3): lr = base_lr * (epoch + 1) / warmup_epochs
+     * Main (epoch >= 3): lr = base_lr * 0.5 * (1 + cos(π * (epoch - 3) / (50 - 3)))
+
+3. DATA AUGMENTATION PARAMETERS
+   - Patch Size: 384x384 pixels
+   - Random Crop: Yes (from 506x898 to 384x384)
+   - Horizontal Flip Probability: 0.5
+   - Vertical Flip Probability: 0.5
+   - Random Rotation (90°/180°/270°): 0.75 probability
+   - Brightness Jitter: 0.7 probability, factor range [0.85, 1.15]
+   - Contrast Jitter: 0.7 probability, factor range [0.85, 1.15]
+   - Overall Augmentation Probability: 0.7
+
+4. MODEL ARCHITECTURE PARAMETERS
+   - Model: MIMOUNetPlus
+   - Encoder Channels: [16, 32, 64, 128]
+   - Decoder Channels: [128, 64, 32, 16]
+   - Number of Encoder Blocks: 4
+   - Number of Decoder Blocks: 4
+   - Feature Attention Modules (FAM): Yes
+   - Supervised Attention Module (SAM): Yes
+   - Asymmetric Feature Fusion (AFF): Yes
+   - Multi-scale Supervision: Yes (3 scales)
+
+5. DATASET SPLIT
+   - Training Set: 90% (959 images)
+   - Validation Set: 10% (107 images)
+   - Random Seed: PyTorch default
+
+6. REGULARIZATION
+   - Gradient Clipping: Max norm = 1.0
+   - Dropout: Not used
+   - Batch Normalization: Not used (custom architecture)
+
+7. HARDWARE & OPTIMIZATION
+   - Device: CUDA (GPU)
+   - Precision: FP32 (float32)
+   - Number of Workers: 2
+   - Pin Memory: No
+   - Mixed Precision: No
+
+8. CHECKPOINT STRATEGY
+   - Save Best Model: Yes (based on validation PSNR)
+   - Save Checkpoint Every: 10 epochs
+   - Best Model Path: checkpoints/best_model_improved.pkl
+   - Checkpoint Path: checkpoints/checkpoint_epoch{N}_improved.pkl
+
+9. PREPROCESSING
+   - Input Normalization: [0, 255] → [0, 1] (divide by 255)
+   - Color Space: RGB
+   - Padding: Reflect padding to multiple of 16
+   - Border Handling: cv2.BORDER_REFLECT
+   - Dataset Formats: JPEG (Railway), PNG (GoPro, LOL)
+   - Multi-Dataset Training: Combined Railway + GoPro + LOL
+
+10. POSTPROCESSING
+   - Output Clipping: [0, 1]
+   - Denormalization: [0, 1] → [0, 255] (multiply by 255)
+   - Data Type: uint8
+
+================================================================================
+ADDITIONAL NOTES
+================================================================================
+
+- Pre-training: Model was initialized from previous checkpoint (best_model.pkl)
+  which had 25.30 dB validation PSNR. This acts as transfer learning.
+  
+- Early Stopping: Not implemented (trained full 50 epochs but stopped at 33 
+  due to user interruption)
+  
+- Validation Frequency: Every epoch
+
+- Training stopped at epoch 33 due to manual interruption. Best model was 
+  saved at epoch 29 with 29.86 dB validation PSNR.
+
+================================================================================
+HYPERPARAMETER RATIONALE
+================================================================================
+
+1. Batch Size = 2: Small batch for better gradient quality on limited dataset
+2. LR = 2e-4: Higher than typical 1e-4 to accelerate learning from pre-trained
+3. Patch Size = 384: Larger than typical 256 for more context in deblurring
+4. Warmup = 3 epochs: Stabilize training when fine-tuning from checkpoint
+5. Augmentation = 0.7: Strong augmentation to prevent overfitting on small data
+6. AdamW: Better weight decay regularization than Adam
+7. L1 Loss: More robust to outliers than L2 (MSE) for image restoration
+8. Gradient Clipping: Prevent gradient explosion during fine-tuning
+
+================================================================================
+END OF HYPERPARAMETERS DOCUMENTATION
+================================================================================
