@@ -1,0 +1,21 @@
+Wagon Number Detection Summary
+============================================================
+
+Total frames processed: 25
+Frames with detections: 12
+Detection rate: 48.0%
+
+Detections:
+------------------------------------------------------------
+Frame 002: ACTHREE (confidence: 0.58)
+Frame 006: 53414 (confidence: 0.93)
+Frame 007: 5314 (confidence: 0.92)
+Frame 008: 5314C (confidence: 0.69)
+Frame 009: CENRILI (confidence: 0.50)
+Frame 013: 188936 (confidence: 0.99)
+Frame 015: 2154 (confidence: 0.54)
+Frame 016: RAILWAY (confidence: 1.00)
+Frame 017: SECOND (confidence: 0.99)
+Frame 020: CLOSES (confidence: 0.83)
+Frame 021: CLOSES (confidence: 0.90)
+Frame 023: SCHHEME (confidence: 0.54)
