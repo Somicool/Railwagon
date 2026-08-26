@@ -1,0 +1,44 @@
+[
+  {
+    "image_path": "test_results_simple\\4_enhanced_text\\fused_0001_gray.png",
+    "detections": [],
+    "wagon_numbers": [],
+    "best_wagon_number": null,
+    "visualization": "test_results_simple\\5_ocr_results\\ocr_visuals\\fused_0001_gray_ocr.png"
+  },
+  {
+    "image_path": "test_results_simple\\4_enhanced_text\\fused_0002_gray.png",
+    "detections": [],
+    "wagon_numbers": [],
+    "best_wagon_number": null,
+    "visualization": "test_results_simple\\5_ocr_results\\ocr_visuals\\fused_0002_gray_ocr.png"
+  },
+  {
+    "image_path": "test_results_simple\\4_enhanced_text\\fused_0003_gray.png",
+    "detections": [],
+    "wagon_numbers": [],
+    "best_wagon_number": null,
+    "visualization": "test_results_simple\\5_ocr_results\\ocr_visuals\\fused_0003_gray_ocr.png"
+  },
+  {
+    "image_path": "test_results_simple\\4_enhanced_text\\fused_0004_gray.png",
+    "detections": [],
+    "wagon_numbers": [],
+    "best_wagon_number": null,
+    "visualization": "test_results_simple\\5_ocr_results\\ocr_visuals\\fused_0004_gray_ocr.png"
+  },
+  {
+    "image_path": "test_results_simple\\4_enhanced_text\\fused_0005_gray.png",
+    "detections": [],
+    "wagon_numbers": [],
+    "best_wagon_number": null,
+    "visualization": "test_results_simple\\5_ocr_results\\ocr_visuals\\fused_0005_gray_ocr.png"
+  },
+  {
+    "image_path": "test_results_simple\\4_enhanced_text\\fused_0006_gray.png",
+    "detections": [],
+    "wagon_numbers": [],
+    "best_wagon_number": null,
+    "visualization": "test_results_simple\\5_ocr_results\\ocr_visuals\\fused_0006_gray_ocr.png"
+  }
+]

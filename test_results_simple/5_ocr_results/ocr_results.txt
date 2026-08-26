@@ -1,0 +1,24 @@
+Image 1: fused_0001_gray.png
+  Wagon Number: NOT DETECTED
+  All detections:
+
+Image 2: fused_0002_gray.png
+  Wagon Number: NOT DETECTED
+  All detections:
+
+Image 3: fused_0003_gray.png
+  Wagon Number: NOT DETECTED
+  All detections:
+
+Image 4: fused_0004_gray.png
+  Wagon Number: NOT DETECTED
+  All detections:
+
+Image 5: fused_0005_gray.png
+  Wagon Number: NOT DETECTED
+  All detections:
+
+Image 6: fused_0006_gray.png
+  Wagon Number: NOT DETECTED
+  All detections:
+
