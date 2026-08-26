@@ -1,0 +1,22 @@
+Wagon Number Detection Summary
+============================================================
+
+Total frames processed: 25
+Frames with detections: 13
+Detection rate: 52.0%
+
+Detections:
+------------------------------------------------------------
+Frame 005: 5814 (confidence: 0.69)
+Frame 006: 5314 (confidence: 1.00)
+Frame 007: 5314 (confidence: 0.99)
+Frame 008: 5314C (confidence: 0.94)
+Frame 013: 5374C (confidence: 0.46)
+Frame 014: 5314B (confidence: 0.99)
+Frame 016: RAILWAY (confidence: 0.98)
+Frame 017: CENTRAL (confidence: 1.00)
+Frame 019: 9355 (confidence: 1.00)
+Frame 020: SCHEM (confidence: 0.71)
+Frame 021: DAYC (confidence: 0.74)
+Frame 022: LESLYLE (confidence: 0.55)
+Frame 024: OPENS (confidence: 0.94)
