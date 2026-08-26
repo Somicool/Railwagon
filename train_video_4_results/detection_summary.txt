@@ -1,0 +1,29 @@
+Wagon Number Detection Summary
+============================================================
+
+Total frames processed: 27
+Frames with detections: 20
+Detection rate: 74.1%
+
+Detections:
+------------------------------------------------------------
+Frame 001: GEITY (confidence: 0.55)
+Frame 002: GETTYI (confidence: 0.84)
+Frame 005: STUP (confidence: 0.44)
+Frame 006: STOP (confidence: 0.79)
+Frame 008: 19006 (confidence: 1.00)
+Frame 009: GETI (confidence: 0.88)
+Frame 011: STOP (confidence: 0.51)
+Frame 012: STOP (confidence: 0.64)
+Frame 013: 07151 (confidence: 0.95)
+Frame 014: GGETT (confidence: 0.61)
+Frame 015: STOP (confidence: 0.43)
+Frame 016: FETTY (confidence: 0.54)
+Frame 017: STUP (confidence: 0.44)
+Frame 020: STUP (confidence: 0.40)
+Frame 021: 12470 (confidence: 1.00)
+Frame 022: STOP (confidence: 0.75)
+Frame 023: STUP (confidence: 0.54)
+Frame 024: STUP (confidence: 0.72)
+Frame 025: STUP (confidence: 0.54)
+Frame 026: STUP (confidence: 0.41)
