@@ -7,6 +7,9 @@ echo MIMOUNetPlus Fine-tuning Script
 echo ========================================
 echo.
 
+REM Move to project root
+cd /d "%~dp0.."
+
 REM Activate virtual environment
 call venv\Scripts\activate.bat
 
@@ -15,7 +18,7 @@ echo Dataset: train/train/ (1066 pairs)
 echo.
 
 REM Start training with default settings
-python finetune_mimo.py ^
+python scripts\finetune_mimo.py ^
     --train_blur train/train/blur ^
     --train_sharp train/train/sharp ^
     --batch_size 4 ^

@@ -5,7 +5,7 @@ REM ============================================================
 REM Run this file from anywhere to start the dashboard
 REM ============================================================
 
-cd /d "%~dp0blur\railway_dashboard\backend"
+cd /d "%~dp0..\railway_dashboard\backend"
 python app.py
 
 if errorlevel 1 (

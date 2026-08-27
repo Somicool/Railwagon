@@ -14,6 +14,7 @@ echo.
 echo ============================================================
 echo.
 
+cd /d "%~dp0.."
 cd railway_dashboard\backend
 python app.py
 
