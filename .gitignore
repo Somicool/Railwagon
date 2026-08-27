@@ -13,12 +13,12 @@ __pycache__/
 
 # Large model weights / checkpoints
 checkpoints/
-weights/
+weights/*
+!weights/README.md
 *.pth
 *.pkl
 *.pt
 !railway_dashboard/backend/yolov8n.pt
-!weights/README.md
 
 # Datasets (too large for GitHub)
 GOPRO_Large/
