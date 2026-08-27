@@ -18,6 +18,7 @@ weights/
 *.pkl
 *.pt
 !railway_dashboard/backend/yolov8n.pt
+!weights/README.md
 
 # Datasets (too large for GitHub)
 GOPRO_Large/
